@@ -107,7 +107,14 @@ view model =
                 a
                     [ href user.htmlUrl, target "_blank" ]
                     [ img [ src user.avatarUrl, width 200 ] []
-                    , div [] [ text user.name ]
+                    , div []
+                        [ case user.name of
+                            Just name ->
+                                text name
+
+                            Nothing ->
+                                text ""
+                        ]
                     , div []
                         [ case user.bio of
                             Just bio ->
@@ -130,7 +137,7 @@ view model =
 type alias User =
     { login : String
     , avatarUrl : String
-    , name : String
+    , name : Maybe String
     , htmlUrl : String
     , bio : Maybe String
     }
@@ -141,6 +148,6 @@ userDecoder =
     D.map5 User
         (D.field "login" D.string)
         (D.field "avatar_url" D.string)
-        (D.field "name" D.string)
+        (D.maybe (D.field "name" D.string))
         (D.field "html_url" D.string)
         (D.maybe (D.field "bio" D.string))
